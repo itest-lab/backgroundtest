@@ -1,7 +1,7 @@
 // GitHub Personal Access Token とリポジトリ情報
-const GITHUB_TOKEN = 'your_github_personal_access_token'; // ← トークンをここに設定
-const REPO_OWNER = 'your_username';                      // ← ユーザー名
-const REPO_NAME = 'your_repository';                     // ← リポジトリ名
+const GITHUB_TOKEN = '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'; // ← トークンをここに設定
+const REPO_OWNER = 'itest-lab';                      // ← ユーザー名
+const REPO_NAME = 'backgroundtest';                     // ← リポジトリ名
 const BRANCH = 'main';                                   // ← ブランチ名
 
 document.getElementById('uploadForm').addEventListener('submit', async (event) => {
