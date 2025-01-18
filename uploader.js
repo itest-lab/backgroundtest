@@ -1,27 +1,32 @@
-// GitHub Personal Access Token とリポジトリ情報
-const GITHUB_TOKEN = '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'; // ← トークンをここに設定
-const REPO_OWNER = 'itest-lab';                      // ← ユーザー名
-const REPO_NAME = 'backgroundtest';                     // ← リポジトリ名
-const BRANCH = 'main';                                   // ← ブランチ名
-
 document.getElementById('uploadForm').addEventListener('submit', async (event) => {
   event.preventDefault();
 
-  const imageUrl = document.getElementById('imageUrl').value;
+  const inputUrl = document.getElementById('imageUrl').value;
   const statusElement = document.getElementById('status');
   statusElement.textContent = '画像を処理中...';
 
   try {
-    // 1. 画像を取得
-    const response = await fetch(imageUrl);
+    // Googleドライブの共有リンクを直接ダウンロードリンクに変換
+    const fileIdMatch = inputUrl.match(/\/d\/([a-zA-Z0-9_-]+)/); // FILE_IDを抽出
+    if (!fileIdMatch) {
+      throw new Error('GoogleドライブのURLが無効です。正しい形式で入力してください。');
+    }
+    const fileId = fileIdMatch[1]; // 正しいFILE_IDを取得
+    const directDownloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+    console.log('Direct download URL:', directDownloadUrl);
+
+    // 画像を取得
+    const response = await fetch(directDownloadUrl);
     if (!response.ok) throw new Error('画像の取得に失敗しました');
     const blob = await response.blob();
     const arrayBuffer = await blob.arrayBuffer();
     const base64Image = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
 
-    // 2. GitHub APIでアップロード
+    // GitHubにアップロード
     const fileName = `images/${Date.now()}-${Math.random().toString(36).substring(7)}.png`;
     const githubUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${fileName}`;
+    console.log('GitHub API URL:', githubUrl);
+
     const uploadResponse = await fetch(githubUrl, {
       method: 'PUT',
       headers: {
@@ -35,15 +40,20 @@ document.getElementById('uploadForm').addEventListener('submit', async (event) =
       }),
     });
 
-    if (!uploadResponse.ok) throw new Error('画像のアップロードに失敗しました');
+    if (!uploadResponse.ok) {
+      const errorDetails = await uploadResponse.json();
+      console.error('GitHub API error details:', errorDetails);
+      throw new Error(`画像のアップロードに失敗しました: ${errorDetails.message}`);
+    }
+
     const uploadResult = await uploadResponse.json();
     const uploadedUrl = uploadResult.content.download_url;
 
-    // 3. 背景画像として設定
+    // 背景画像として設定
     document.body.style.backgroundImage = `url('${uploadedUrl}')`;
     statusElement.textContent = '画像をアップロードして背景に設定しました!';
   } catch (error) {
-    console.error(error);
+    console.error('Error occurred:', error);
     statusElement.textContent = `エラー: ${error.message}`;
   }
 });
