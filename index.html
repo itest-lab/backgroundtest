@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>背景画像テスト</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>画像アップロード</title>
 </head>
 <body>
-    <div class="content">
-        <h1>背景画像テスト</h1>
-        <p>これは背景画像のテストです。</p>
-    </div>
+  <h1>画像アップローダー</h1>
+  <form id="uploadForm">
+    <label for="imageUrl">Googleドライブ画像URLを入力:</label>
+    <input type="text" id="imageUrl" placeholder="https://drive.google.com/..." required>
+    <button type="submit">アップロード</button>
+  </form>
+  <p id="status"></p>
+
+  <script src="uploader.js"></script>
 </body>
 </html>
