@@ -6,18 +6,20 @@ document.getElementById('uploadForm').addEventListener('submit', async (event) =
   statusElement.textContent = '画像を処理中...';
 
   try {
-    // Googleドライブの共有リンクを直接ダウンロードリンクに変換
-    const fileIdMatch = inputUrl.match(/\/d\/([a-zA-Z0-9_-]+)/); // FILE_IDを抽出
+    // GoogleドライブURLを直接ダウンロードリンクに変換
+    const fileIdMatch = inputUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
     if (!fileIdMatch) {
       throw new Error('GoogleドライブのURLが無効です。正しい形式で入力してください。');
     }
-    const fileId = fileIdMatch[1]; // 正しいFILE_IDを取得
+    const fileId = fileIdMatch[1];
     const directDownloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
-    console.log('Direct download URL:', directDownloadUrl);
 
-    // 画像を取得
-    const response = await fetch(directDownloadUrl);
-    if (!response.ok) throw new Error('画像の取得に失敗しました');
+    // プロキシサーバー経由で画像を取得
+    const proxyUrl = `http://localhost:3000/proxy?url=${encodeURIComponent(directDownloadUrl)}`;
+    console.log('Proxy URL:', proxyUrl);
+
+    const response = await fetch(proxyUrl);
+    if (!response.ok) throw new Error('プロキシ経由で画像の取得に失敗しました');
     const blob = await response.blob();
     const arrayBuffer = await blob.arrayBuffer();
     const base64Image = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
