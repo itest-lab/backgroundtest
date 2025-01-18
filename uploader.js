@@ -1,5 +1,5 @@
 // GitHub Personal Access Token とリポジトリ情報
-const GITHUB_TOKEN = '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'; // ← トークンをここに設定
+const GITHUB_TOKEN = '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'; // ← トークンをここに設定
 const REPO_OWNER = 'itest-lab';                      // ← ユーザー名
 const REPO_NAME = 'backgroundtest';                     // ← リポジトリ名
 const BRANCH = 'main';                                   // ← ブランチ名
